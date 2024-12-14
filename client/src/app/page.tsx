@@ -1,9 +1,17 @@
-import Image from "next/image";
-import RichTextEditor from "@/components/Dashboard/TextEditor";
+import { TextEditor } from "@/components/Dashboard/TextEditor"
+import {RichTextEditor} from "@/components/Dashboard/test"
 export default function Home() {
   return (
-    <div>
-      <RichTextEditor />
-    </div>
-  );
+    <>
+    <TextEditor
+      // h1 now renders with `large-text` className
+      source={
+        `
+        # Hello World
+        **This8** is from Server Components!
+        `}
+        />
+    <RichTextEditor />
+        </>
+  )
 }

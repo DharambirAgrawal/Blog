@@ -93,3 +93,5 @@ Jane Doe is a senior web developer with 10+ years of experience in JavaScript an
 
 
 `;
+
+export const twmplate1 = ``;

@@ -2,6 +2,9 @@ import { compileMDX } from "next-mdx-remote/rsc";
 import Image, { ImageProps } from "next/image";
 import Link from "next/link";
 import rehypePrettyCode from "rehype-pretty-code";
+interface PropsType {
+  source: string;
+}
 
 const components = {
   h1: (props: any) => (
@@ -50,8 +53,8 @@ const components = {
 
 const rehypePrettyCodePlugin: any = rehypePrettyCode;
 
-export async function CompileMDX(props) {
-  const { content, frontmatter } = await compileMDX<{ title: string }>({
+export async function CompileMDX(props: PropsType) {
+  const { content } = await compileMDX<{ title: string }>({
     source: props.source,
     options: {
       parseFrontmatter: true,

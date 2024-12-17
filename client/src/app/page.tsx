@@ -1,9 +1,5 @@
-import { CompileMDX } from "@/components/CompileMDX";
-import { template2 } from "@/lib/templates";
-export default function Home() {
-  return (
-    <>
-      <CompileMDX source={template2} />
-    </>
-  );
+// Dynamically import the client component so it doesn’t trigger server revalidation
+
+export default async function Home() {
+  return <>hello</>;
 }

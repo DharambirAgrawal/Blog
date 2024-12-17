@@ -1,9 +1,9 @@
-import Image from "next/image";
-import RichTextEditor from "@/components/Dashboard/TextEditor";
+import { CompileMDX } from "@/components/CompileMDX";
+import { template2 } from "@/lib/templates";
 export default function Home() {
   return (
-    <div>
-      <RichTextEditor />
-    </div>
+    <>
+      <CompileMDX source={template2} />
+    </>
   );
 }

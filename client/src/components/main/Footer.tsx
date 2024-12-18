@@ -4,9 +4,13 @@ import Link from "next/link";
 //   email,
 //   phone,
 // } from "@/public/icon/index";
-import { FacebookIcon, XIcon, InstagramIcon } from "@/assets/icons/icons";
-import {} from "lucide-react"
-"
+import {
+  FacebookIcon,
+  XIcon,
+  InstagramIcon,
+  PhoneIcon,
+  MailIcon,
+} from "@/assets/icons/icons";
 
 const Footer = () => {
   return (
@@ -22,10 +26,9 @@ const Footer = () => {
             warrant full correctness of all content.
           </p>
           <div className="flex flex-row gap-2">
-          <FacebookIcon className="h-8 w-8 border-2"/>
-          <XIcon className="h-8 w-8 border-2"/>
-          <InstagramIcon className="h-8 w-8 border-2"/>            
-            
+            <FacebookIcon className="h-8 w-8 " />
+            <XIcon className="h-8 w-8 " />
+            <InstagramIcon className="h-8 w-8" />
           </div>
         </div>
         {/* Support  */}
@@ -50,23 +53,12 @@ const Footer = () => {
           <h5 className="h5-bold">Contact Us</h5>
           <div className="flex flex-col gap-2">
             <span className="flex flex-row gap-2 items-center">
-              <Image
-                src={phone}
-                alt="Picture of the author"
-                width={60}
-                height={60}
-                className="h-7 w-7"
-              />
+              <PhoneIcon />
+
               <p>+977 9824944441</p>
             </span>
             <span className="flex flex-row gap-2 items-center">
-              <Image
-                src={email}
-                alt="Picture of the author"
-                width={60}
-                height={60}
-                className="h-7 w-7"
-              />
+              <MailIcon />
               <p className="break-all">dev.dharambir@gmail.com</p>
             </span>
           </div>

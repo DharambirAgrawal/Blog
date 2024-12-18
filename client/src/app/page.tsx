@@ -1,6 +1,4 @@
 import Image from "next/image";
-import { FacebookIcon, XIcon, InstagramIcon } from "@/assets/icons/icons";
-
 import Navigation from "@/components/main/Navigation";
 import { PostCard, EnhancedPostCard } from "@/components/landingPage/PostCard";
 import Subscribe from "@/components/main/Subscribe";
@@ -8,6 +6,7 @@ import PopularCategories from "@/components/landingPage/PopularCategories";
 import ReadingProgress from "@/components/main/ReadingProgress";
 import TrendingTopics from "@/components/landingPage/TrendingTopics";
 import AuthorSpotlight from "@/components/landingPage/AuthorSpotlight";
+import Footer from "@/components/main/Footer";
 
 // Main Landing Page Component
 const BlogLandingPage = () => {
@@ -97,43 +96,15 @@ const BlogLandingPage = () => {
           </div>
         </section>
         <PopularCategories />
-        {/* <AuthorSpotlight /> */}
         <ReadingProgress />
         <TrendingTopics />
 
-        {/* Newsletter Section */}
         <EnhancedPostCard />
         <AuthorSpotlight />
         <Subscribe />
 
         {/* Social Media Links */}
-        <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex justify-center space-x-8">
-              <a
-                href="#"
-                className="text-gray-600 hover:text-blue-600 transition-colors"
-              >
-                <XIcon className="h-8 w-8" />
-                <span className="sr-only">Twitter</span>
-              </a>
-              <a
-                href="#"
-                className="text-gray-600 hover:text-pink-600 transition-colors"
-              >
-                <InstagramIcon className="h-8 w-8" />
-                <span className="sr-only">Instagram</span>
-              </a>
-              <a
-                href="#"
-                className="text-gray-600 hover:text-blue-800 transition-colors"
-              >
-                <FacebookIcon className="h-8 w-8" />
-                <span className="sr-only">Facebook</span>
-              </a>
-            </div>
-          </div>
-        </section>
+        <Footer />
       </div>
     </>
   );

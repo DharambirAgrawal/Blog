@@ -62,30 +62,33 @@ const termsData = [
   },
 ];
 
-const page = () => {
+const Page = () => {
   return (
-    <div className=" space-y-5 py-4">
-      <h1 className="h2-semibold">Terms and Conditions</h1>
+    <div className="max-w-4xl mx-auto sm:px-6 py-8 space-y-8">
+      <h1 className="text-3xl font-extrabold text-gray-800">
+        Terms and Conditions
+      </h1>
 
-      <p className="text-gray-600">
+      <p className="text-gray-600 leading-relaxed">
         Welcome to cursolog! By accessing and using our website, you agree to
         comply with and be bound by the following terms and conditions. If you
         disagree with any part of these terms, please do not use our website.
       </p>
-      <div className=" space-y-4">
+
+      <div className="space-y-6">
         {termsData?.map((value, index) => (
-          <div key={index}>
-            <h2 className="h5-bold">
+          <div key={index} className="space-y-2">
+            <h2 className="text-lg font-semibold text-gray-700">
               {index + 1}. {value.title}
             </h2>
-            <p className="text-gray-600 pt-2">{value.value}</p>
+            <p className="text-gray-600 leading-relaxed">{value.value}</p>
           </div>
         ))}
       </div>
 
-      <div className="h-40" />
+      <div className="h-20" />
     </div>
   );
 };
 
-export default page;
+export default Page;

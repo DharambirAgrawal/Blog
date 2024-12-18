@@ -6,13 +6,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
-      <div className="flex flex-row w-full max-sm:flex-col wrapper">
-        <nav className="min-w-48 max-md:min-w-36 max-sm:w-full">
-          <Navbar />
-        </nav>
-        <section>{children}</section>
-      </div>
-    </>
+    <div className="flex flex-col md:flex-row w-full">
+      <nav className="w-full md:w-1/4">
+        <Navbar />
+      </nav>
+      <main className="flex-1 p-6">{children}</main>
+    </div>
   );
 }

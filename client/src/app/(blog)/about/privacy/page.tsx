@@ -39,28 +39,25 @@ const privacyData = [
 
 const page = () => {
   return (
-    <div className=" space-y-5 pt-5">
-      <h1 className="h2-semibold">Privacy Policy</h1>
-
-      <p className=" text-[#303030]">
+    <div className="space-y-6 pt-8 lg:px-12 sm:p-6">
+      <h1 className="text-3xl font-bold text-gray-800">Privacy Policy</h1>
+      <p className="text-gray-700 leading-relaxed">
         This Privacy Policy governs the manner in which cursolog collects, uses,
         maintains, and discloses information collected from users (each, a
         "User") of the cursolog website ("Site"). This privacy policy applies to
         the Site and all products and services offered by cursolog.
       </p>
-
-      <div className="space-y-4">
+      <div className="space-y-6">
         {privacyData.map((value, index) => (
           <div key={index}>
-            <h2 className="h5-bold">
+            <h2 className="text-xl font-semibold text-gray-800">
               {index + 1}. {value.title}
             </h2>
-            <p className="text-gray-600 pt-2">{value.value}</p>
+            <p className="text-gray-600 leading-relaxed mt-2">{value.value}</p>
           </div>
         ))}
       </div>
-
-      <div className="h-40" />
+      <div className="h-16" /> {/* Adjusted for consistent spacing */}
     </div>
   );
 };

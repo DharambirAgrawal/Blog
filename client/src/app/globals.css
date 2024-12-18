@@ -3,41 +3,41 @@
 @tailwind utilities;
 
 .wrapper {
-  margin-right: auto;
-  margin-left: auto;
-  max-width: 1536px;
-  padding-left: 6rem /* 96px */;
-  padding-right: 6rem /* 96px */;
+  margin: 0 auto;
+  max-width: 1200px; /* Default max width for large screens */
+  padding: 0 2rem; /* Default padding */
 }
 
-@media screen and (max-width: 1536px) {
+@media (min-width: 1536px) {
   .wrapper {
-    max-width: 1366px;
+    max-width: 1440px; /* Wider for larger screens */
+    padding: 0 3rem;
   }
 }
-@media screen and (max-width: 1280px) {
+
+@media (max-width: 1280px) {
   .wrapper {
     max-width: 1024px;
+    padding: 0 2rem; /* Consistent padding for tablets and laptops */
   }
 }
-@media screen and (max-width: 1024px) {
+
+@media (max-width: 1024px) {
   .wrapper {
     max-width: 768px;
-    padding-left: 30px;
-    padding-right: 30px;
+    padding: 0 1.5rem;
   }
 }
-@media screen and (max-width: 768px) {
+
+@media (max-width: 768px) {
   .wrapper {
-    max-width: 640px;
-    padding-left: 20px;
-    padding-right: 20px;
+    max-width: 100%; /* Full width for smaller screens */
+    padding: 0 1rem;
   }
 }
-@media screen and (max-width: 640px) {
+
+@media (max-width: 480px) {
   .wrapper {
-    /* max-width: 475px; */
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 0 0.5rem; /* Compact padding for very small screens */
   }
 }

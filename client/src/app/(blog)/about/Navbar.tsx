@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 const links = [
   {
-    title: "AboutUs",
+    title: "About Us",
     link: "/about/us",
   },
   {
@@ -17,32 +17,33 @@ const links = [
     link: "/about/privacy",
   },
 ];
+
 const Navbar = () => {
   const pathname = usePathname();
+
   return (
-    <>
-      <div className="">
-        <h6 className="px-4 pb-6 pt-4 max-sm:hidden h4-semibold">About Us</h6>
-        <div className="flex flex-col gap-3 sm:mx-2 max-sm:flex-row max-sm:border-y-2 max-sm:p-3 ">
-          {links.map((item, index) => {
-            const isActive = pathname === item.link;
-            return (
+    <div className="p-6 bg-white shadow-md rounded-lg border border-gray-200 my-6 max-w-sm">
+      <h2 className="text-xl font-bold text-gray-800 mb-4">About Us</h2>
+      <ul className="space-y-3">
+        {links.map((item, index) => {
+          const isActive = pathname === item.link;
+          return (
+            <li key={index}>
               <Link
-                key={index}
                 href={item.link}
-                className={
+                className={`block px-4 py-2 rounded-lg font-medium transition ${
                   isActive
-                    ? " bg-blue-500 rounded-md"
-                    : "hover:bg-blue-300 px-2 rounded-md"
-                }
+                    ? "bg-blue-600 text-white shadow-md"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-blue-600"
+                }`}
               >
                 {item.title}
               </Link>
-            );
-          })}
-        </div>
-      </div>
-    </>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 };
 

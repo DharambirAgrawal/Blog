@@ -1,9 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-// import {
-//   email,
-//   phone,
-// } from "@/public/icon/index";
 import {
   FacebookIcon,
   XIcon,
@@ -15,60 +11,84 @@ import {
 const Footer = () => {
   return (
     <>
-      <div className="grid grid-cols-5 py-8 gap-4 max-md:grid-cols-2 max-sm:grid-cols-1 container mx-auto max-sm:px-2 max-[450px]:px-4">
-        {/* About us */}
-        <div className="flex flex-col gap-4 md:col-span-2">
-          <h5 className="h5-bold">About Us</h5>
-          <p className="h7 ">
-            cursolog is optimized for learning and training. Examples might be
-            simplified to improve reading and learning. Tutorials, references,
-            and examples are constantly reviewed to avoid errors, but we cannot
-            warrant full correctness of all content.
-          </p>
-          <div className="flex flex-row gap-2">
-            <FacebookIcon className="h-8 w-8 " />
-            <XIcon className="h-8 w-8 " />
-            <InstagramIcon className="h-8 w-8" />
+      <footer className="bg-gray-100 py-8">
+        <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-6">
+          {/* About Us */}
+          <div>
+            <h5 className="text-lg font-semibold mb-4">About Us</h5>
+            <p className="text-sm text-gray-600 mb-4">
+              cursolog is optimized for learning and training. Examples might be
+              simplified to improve reading and learning. Tutorials, references,
+              and examples are constantly reviewed to avoid errors, but we
+              cannot warrant full correctness of all content.
+            </p>
+            <div className="flex gap-4">
+              <FacebookIcon className="h-6 w-6 text-gray-700 hover:text-blue-600 transition" />
+              <XIcon className="h-6 w-6 text-gray-700 hover:text-blue-400 transition" />
+              <InstagramIcon className="h-6 w-6 text-gray-700 hover:text-pink-500 transition" />
+            </div>
           </div>
-        </div>
-        {/* Support  */}
-        <div className="flex flex-col gap-4">
-          <h5 className="h5-bold">Support</h5>
-          <div className=" text-slate-900 flex flex-col">
-            <Link href="/about/terms">Terms</Link>
-            <Link href="/about/privacy">Privacy Policy</Link>
-            <Link href="/about/cursolog">Help</Link>
-            <Link href="/about/cursolog">Contact</Link>
-          </div>
-        </div>
-        {/* Learn  */}
-        <div className="flex flex-col gap-4">
-          <h5 className="h5-bold">Learn</h5>
-          <div className="text-slate-900 flex flex-col">
-            <Link href="/blog">Blog</Link>
-          </div>
-        </div>
-        {/* Contact us  */}
-        <div className="flex flex-col gap-4">
-          <h5 className="h5-bold">Contact Us</h5>
-          <div className="flex flex-col gap-2">
-            <span className="flex flex-row gap-2 items-center">
-              <PhoneIcon />
 
-              <p>+977 9824944441</p>
-            </span>
-            <span className="flex flex-row gap-2 items-center">
-              <MailIcon />
-              <p className="break-all">dev.dharambir@gmail.com</p>
-            </span>
+          {/* Support */}
+          <div>
+            <h5 className="text-lg font-semibold mb-4">Support</h5>
+            <ul className="space-y-2 text-gray-700">
+              <li>
+                <Link href="/about/terms" className="hover:underline">
+                  Terms
+                </Link>
+              </li>
+              <li>
+                <Link href="/about/privacy" className="hover:underline">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/about/cursolog" className="hover:underline">
+                  Help
+                </Link>
+              </li>
+              <li>
+                <Link href="/about/cursolog" className="hover:underline">
+                  Contact
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Learn */}
+          <div>
+            <h5 className="text-lg font-semibold mb-4">Learn</h5>
+            <ul className="space-y-2 text-gray-700">
+              <li>
+                <Link href="/blog" className="hover:underline">
+                  Blog
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Us */}
+          <div>
+            <h5 className="text-lg font-semibold mb-4">Contact Us</h5>
+            <ul className="space-y-2 text-gray-700">
+              <li className="flex items-center gap-2">
+                <PhoneIcon className="h-5 w-5 text-gray-500" />
+                <span>+977 9824944441</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <MailIcon className="h-5 w-5 text-gray-500" />
+                <span className="break-words">dev.dharambir@gmail.com</span>
+              </li>
+            </ul>
           </div>
         </div>
-      </div>
-      <div className="border-t-[1px] border-black flex justify-center py-3">
-        <p className="text-center h7">
-          Copyright &copy; 2024 cursolog, Inc. All rights reserved.
-        </p>
-      </div>
+        <div className="border-t mt-8 pt-4">
+          <p className="text-center text-sm text-gray-600">
+            &copy; 2024 cursolog, Inc. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </>
   );
 };

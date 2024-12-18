@@ -7,7 +7,7 @@ import React, {
   useEffect,
   KeyboardEvent,
 } from "react";
-import { updateStateOnServer } from "@/app/dashboard/write/actions";
+import { updateMdxText } from "./actions";
 import { template2 } from "@/lib/templates";
 import {
   Bold,
@@ -76,9 +76,6 @@ const MDXEditor = () => {
 
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
-  const [selections, setSelections] = useState<
-    { start: number; end: number }[]
-  >([]);
   const [autoSaveTimer, setAutoSaveTimer] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -309,13 +306,16 @@ const MDXEditor = () => {
       if (autoSaveTimer) clearTimeout(autoSaveTimer);
       const timer = setTimeout(async () => {
         try {
-          await updateStateOnServer(editorState.content);
+          await updateMdxText(editorState.content);
           setEditorState((prev) => ({ ...prev, isSaved: true }));
         } catch (error) {}
       }, 2000);
       setAutoSaveTimer(timer);
     }
   }, [editorState.content, editorState.isModified]);
+  useEffect(() => {
+    updateMdxText(editorState.content);
+  }, []);
 
   const syncScroll = useCallback(
     (e: React.UIEvent<HTMLTextAreaElement>) => {

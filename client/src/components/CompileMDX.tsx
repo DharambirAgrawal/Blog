@@ -65,13 +65,7 @@ export async function CompileMDX(props: PropsType) {
     components,
   });
 
-  return (
-    <div className="flex flex-col items-center px-4 md:px-10 w-full">
-      <article className="prose prose-lg prose-headings:font-bold prose-code:bg-gray-100 prose-code:rounded-md prose-code:p-2 prose-code:text-sm prose-blockquote:bg-gray-50 prose-blockquote:border-l-4 prose-blockquote:border-accent prose-blockquote:italic prose-blockquote:px-4 w-full max-w-4xl">
-        {content}
-      </article>
-    </div>
-  );
+  return <> {content}</>;
 }
 
 // Tailwind CSS classes applied:
@@ -82,3 +76,10 @@ export async function CompileMDX(props: PropsType) {
 // - `flex`, `items-center`: Centers content.
 // - `max-w-4xl`: Restricts maximum width to make the blog visually appealing.
 // - `rounded-md`, `shadow-md`: Enhances elements like code blocks and images.
+{
+  /* <div className="flex flex-col items-center px-4 md:px-10 w-full">
+<article className="prose prose-lg prose-headings:font-bold prose-code:bg-gray-100 prose-code:rounded-md prose-code:p-2 prose-code:text-sm prose-blockquote:bg-gray-50 prose-blockquote:border-l-4 prose-blockquote:border-accent prose-blockquote:italic prose-blockquote:px-4 w-full max-w-4xl">
+  {content}
+</article>
+</div> */
+}

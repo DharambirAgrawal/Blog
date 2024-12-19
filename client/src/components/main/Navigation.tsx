@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -39,12 +40,12 @@ const Navigation = () => {
             </a>
 
             {/* Login Button */}
-            <a
-              href="#"
+            <Link
+              href="/auth/login"
               className="ml-4 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
             >
               Login
-            </a>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -114,12 +115,12 @@ const Navigation = () => {
           >
             Contact
           </a>
-          <a
-            href="#"
+          <Link
+            href="/login"
             className="block text-center text-white bg-blue-600 hover:bg-blue-700 font-medium px-4 py-2 rounded-lg transition"
           >
             Login
-          </a>
+          </Link>
         </div>
       </div>
     </nav>

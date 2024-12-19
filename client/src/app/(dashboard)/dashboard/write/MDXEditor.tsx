@@ -340,8 +340,8 @@ const MDXEditor = () => {
   }, [editorState.content]);
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-4">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div className="w-full max-w-4xl mx-auto space-y-4 h-[calc(100vh-100px)] overflow-hidden">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col h-full">
         <div className="flex items-center justify-between p-2 border-b border-gray-200 bg-gray-50">
           <div className="flex items-center gap-1 flex-wrap">
             {mdxComponents.map((component, index) => (
@@ -382,7 +382,7 @@ const MDXEditor = () => {
           </div>
         </div>
 
-        <div className="relative flex">
+        <div className="relative flex flex-1 overflow-hidden">
           <div
             ref={lineNumbersRef}
             className="absolute left-0 top-0 bottom-0 w-12 bg-gray-50 border-r border-gray-200 overflow-hidden"
@@ -404,18 +404,15 @@ const MDXEditor = () => {
               addToHistory(e.target.value);
               updateMetrics();
             }}
+            name="content"
             onScroll={syncScroll}
             onKeyDown={handleKeyDown}
             placeholder="Write your MDX content here..."
-            className="w-full min-h-[32rem] pl-14 py-4 pr-4 font-mono text-sm bg-white focus:outline-none resize-y leading-6"
+            className="w-full h-full pl-14 py-4 pr-4 font-mono text-sm bg-white focus:outline-none resize-none leading-6 overflow-y-auto"
             spellCheck={false}
             style={{
               tabSize: TAB_SIZE,
               lineHeight: "1.5rem",
-              height: Math.max(
-                editorState.content.split("\n").length * 24 + 40,
-                512
-              ),
             }}
           />
         </div>
@@ -429,10 +426,10 @@ const MDXEditor = () => {
               <span>{metrics.selections} selected</span>
             )}
           </div>
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <span>{editorState.isModified ? "Unsaved changes" : "Saved"}</span>
             <span>MDX</span>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

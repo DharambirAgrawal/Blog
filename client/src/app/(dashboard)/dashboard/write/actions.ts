@@ -13,3 +13,22 @@ export async function updateMdxText(newState: string) {
 export async function getMdxText() {
   return mdxText; // Return the current state
 }
+
+export async function submitBlogPost(prevState: any, formData: FormData) {
+  // Submit the data to the server
+
+  // console.log(Object.fromEntries(formData));
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+  console.log(";;;;;;;;;;;;");
+  return {
+    status: "success",
+    message: "Blog post submitted successfully",
+  };
+}
+
+export const handlePublish = async (formData: FormData) => {
+  // console.log(e);
+  console.log("................");
+  console.log(Object.fromEntries(formData));
+  revalidatePath("/dashboard/write");
+};

@@ -14,7 +14,10 @@ export function middleware(request: NextRequest) {
   // Check if user is authenticated
   const token = request.cookies.get("auth-token");
   console.log(token);
-
+  const cok = request.cookies.has("nextjs");
+  console.log(cok);
+  //   const response = NextResponse.next()
+  //   response.cookies.set('vercel', 'fast')
   if (pathname.startsWith("/dashboard")) {
     if (!token) {
       // Redirect to login if not authenticated

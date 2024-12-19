@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   String        @id @default(uuid()) @db.Uuid 
+  name                 String
+  email                String        @unique
+  password             String
+  accountStatus        AccountStatus @default(pending)
+  role                 UserRole      @default(user)
+  failedLoginAttempts  Int           @default(0)
+  lockoutUntil         DateTime?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  lastPasswordChange   DateTime?
+  jwtToken             String?
+  lastActiveAt         DateTime      @default(now())
+  posts                Post[]
+  @@map("users")
+}
+
+model Post {
+  id          String       @id @default(uuid()) @db.Uuid
+  title       String
+  views       Int          @default(0)
+  publishedAt DateTime?
+  slug        String       @unique
+  content     String
+  summary     String?      // Short summary of the post
+  imageUrl    String?      // Optional: Featured image URL
+  published   Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  expiresAt   DateTime
+  userId      String
+  uId         String       @unique
+  user        User         @relation(fields: [userId], references: [id], onDelete: SetNull)  // SetNull to preserve posts
+
+  // SEO Metadata
+  metaTitle   String?      // Meta title for SEO
+  metaDesc    String?      // Meta description for SEO
+  metaKeywords String?     // Meta keywords for SEO
+  metaImage   String?      // URL to an image for SEO sharing (og:image)
+
+  categories  Category[]   @relation("PostCategories")
+  tags        Tag[]        @relation("PostTags")
+
+  @@map("posts")
+  @@index([slug], name: "slug_idx") // Indexed for faster lookups
+}
+
+model Category {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @unique
+  slug      String   @unique
+  posts     Post[]   @relation("PostCategories")
+
+  @@map("categories")
+}
+
+model Tag {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @unique
+  slug      String   @unique
+  posts     Post[]   @relation("PostTags")
+
+  @@map("tags")
+}
+
+model Subscription {
+  id        String   @id @default(uuid())
+  email     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("subscriptions")
+}
+
+enum AccountStatus {
+  active
+  suspended
+  inactive
+  pending
+
+  @@map("account_status")
+}
+
+enum UserRole {
+  user
+  admin
+  @@map("user_roles")
+}

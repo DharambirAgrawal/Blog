@@ -22,9 +22,10 @@ app.use(logger);
 
 //routes
 import { authRouter } from "./src/routes/authRoutes.js";
+import { userRouter } from "./src/routes/userRoutes.js";
 
 app.use("/api/auth", authRouter);
-app.use("/api/user", authRouter);
+app.use("/api/user", userRouter);
 
 // Handle 404 routes
 app.all("*", (req, res, next) => {

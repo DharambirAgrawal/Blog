@@ -1,17 +1,63 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, ChangeEvent, MouseEvent } from "react";
 import { Camera, Calendar, Clock, Hash, X } from "lucide-react";
 import MDXEditor from "./MDXEditor";
 import { useActionState } from "react";
 import { handlePublish, submitBlogPost } from "./actions";
+import Image from "next/image";
 
 const initialState = {
   type: "",
   content: "",
 };
 
-const BlogPostForm = ({ initialData, categories = [], tags = [] }) => {
-  const [formData, setFormData] = useState({
+interface Category {
+  id: string;
+  name: string;
+}
+
+interface Tag {
+  id: string;
+  name: string;
+}
+
+interface BlogPostFormProps {
+  initialData?: {
+    title: string;
+    description: string;
+    category: string;
+    tags: string[];
+    coverImage: string;
+    mdxText: string;
+  };
+  categories: Category[];
+  tags: Tag[];
+}
+
+interface FormData {
+  title: string;
+  slug: string;
+  content: string;
+  summary: string;
+  imageUrl: string;
+  published: boolean;
+  publishedAt: string;
+  expiresAt: string;
+  metaTitle: string;
+  metaDesc: string;
+  metaKeywords: string;
+  metaImage: string;
+  selectedCategories: string[];
+  selectedTags: string[];
+  views: number;
+}
+
+const BlogPostForm: React.FC<BlogPostFormProps> = ({
+  initialData,
+  categories = [],
+  tags = [],
+}) => {
+  const [formData, setFormData] = useState<FormData>({
     title: "",
     slug: "",
     content: "",
@@ -30,25 +76,30 @@ const BlogPostForm = ({ initialData, categories = [], tags = [] }) => {
     ...initialData,
   });
 
-  const [errors, setErrors] = useState({});
-  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
-  const [showTagDropdown, setShowTagDropdown] = useState(false);
-  const [previewImage, setPreviewImage] = useState(null);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [showCategoryDropdown, setShowCategoryDropdown] =
+    useState<boolean>(false);
+  const [showTagDropdown, setShowTagDropdown] = useState<boolean>(false);
+  const [previewImage, setPreviewImage] = useState<string | ArrayBuffer | null>(
+    null
+  );
 
   const [state, formAction, isPending] = useActionState(
     submitBlogPost,
-    undefined
+    initialState
   );
 
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
   };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -56,14 +107,14 @@ const BlogPostForm = ({ initialData, categories = [], tags = [] }) => {
         setPreviewImage(reader.result);
         setFormData((prev) => ({
           ...prev,
-          imageUrl: reader.result,
+          imageUrl: reader.result as string,
         }));
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const toggleCategory = (categoryId) => {
+  const toggleCategory = (categoryId: string) => {
     setFormData((prev) => ({
       ...prev,
       selectedCategories: prev.selectedCategories.includes(categoryId)
@@ -72,7 +123,7 @@ const BlogPostForm = ({ initialData, categories = [], tags = [] }) => {
     }));
   };
 
-  const toggleTag = (tagId) => {
+  const toggleTag = (tagId: string) => {
     setFormData((prev) => ({
       ...prev,
       selectedTags: prev.selectedTags.includes(tagId)
@@ -160,7 +211,7 @@ const BlogPostForm = ({ initialData, categories = [], tags = [] }) => {
               name="summary"
               value={formData.summary}
               onChange={handleInputChange}
-              rows="3"
+              rows={3}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Brief summary of the post"
             />
@@ -196,9 +247,11 @@ const BlogPostForm = ({ initialData, categories = [], tags = [] }) => {
             />
             {previewImage ? (
               <div className="relative">
-                <img
-                  src={previewImage}
+                <Image
+                  src={String(previewImage)}
                   alt="Preview"
+                  width={300}
+                  height={300}
                   className="max-h-48 rounded-lg"
                 />
                 <button
@@ -419,7 +472,7 @@ const BlogPostForm = ({ initialData, categories = [], tags = [] }) => {
                 name="metaDesc"
                 value={formData.metaDesc}
                 onChange={handleInputChange}
-                rows="2"
+                rows={2}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="SEO optimized description"
               />

@@ -18,6 +18,6 @@ export const menuItems = [
   { name: "Write", icon: Edit, href: "/dashboard/write" },
   { name: "Find Posts", icon: Search, href: "/find-posts" },
   // { name: "Analytics", icon: BarChart, href: "/analytics" },
-  // { name: "Users", icon: Users, href: "/users" },
+  { name: "Users", icon: Users, href: "/dashboard/users" },
   // { name: "Reports", icon: File, href: "/reports" },
 ];

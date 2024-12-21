@@ -21,8 +21,8 @@ export async function submitBlogPost(prevState: any, formData: FormData) {
   await new Promise((resolve) => setTimeout(resolve, 5000));
   console.log(";;;;;;;;;;;;");
   return {
-    status: "success",
-    message: "Blog post submitted successfully",
+    type: "success",
+    content: "Blog post submitted successfully",
   };
 }
 

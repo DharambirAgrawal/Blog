@@ -1,4 +1,13 @@
-const SearchResults = ({ isOpen, onClose, results }) => {
+interface SearchResultsProps {
+  isOpen: boolean;
+  onClose: () => void;
+  results: Array<{
+    title: string;
+    excerpt: string;
+  }>;
+}
+
+const SearchResults = ({ isOpen, onClose, results }: SearchResultsProps) => {
   if (!isOpen) return null;
 
   return (

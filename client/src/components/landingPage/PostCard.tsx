@@ -4,7 +4,13 @@ import Image from "next/image";
 import { useState } from "react";
 import { Calendar, Clock, ThumbsUp, Share2, Bookmark } from "lucide-react";
 
-const PostCard = ({ title, description, imageUrl }) => (
+interface PostCardProps {
+  title: string;
+  description: string;
+  imageUrl: string;
+}
+
+const PostCard = ({ title, description, imageUrl }: PostCardProps) => (
   <article className="bg-white rounded-lg shadow-md overflow-hidden">
     <div className="relative h-48">
       <Image

@@ -48,8 +48,8 @@ model Post {
   metaKeywords String?     // Meta keywords for SEO
   metaImage   String?      // URL to an image for SEO sharing (og:image)
 
-  categories  Category[]   @relation("PostCategories")
-  tags        Tag[]        @relation("PostTags")
+  categories  Category[]   @relation("categories")
+  tags        Tag[]        @relation("tags")
 
   @@map("posts")
   @@index([slug], name: "slug_idx") // Indexed for faster lookups
@@ -59,7 +59,7 @@ model Category {
   id        String   @id @default(uuid()) @db.Uuid
   name      String   @unique
   slug      String   @unique
-  posts     Post[]   @relation("PostCategories")
+  posts     Post[]   @relation("categories")
 
   @@map("categories")
 }
@@ -68,7 +68,7 @@ model Tag {
   id        String   @id @default(uuid()) @db.Uuid
   name      String   @unique
   slug      String   @unique
-  posts     Post[]   @relation("PostTags")
+  posts     Post[]   @relation("tags")
 
   @@map("tags")
 }

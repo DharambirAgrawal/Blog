@@ -12,9 +12,10 @@ model User {
   name                 String
   email                String        @unique
   password             String
-  accountStatus        AccountStatus @default(pending)
-  role                 UserRole      @default(user)
+  accountStatus        AccountStatus @default(PENDING)
+  role                 UserRole      @default(USER)
   failedLoginAttempts  Int           @default(0)
+  image                String?       @default("https://ui-avatars.com/api/?name=John+Doe&background=random")
   lockoutUntil         DateTime?
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
@@ -29,7 +30,8 @@ model Post {
   id          String       @id @default(uuid()) @db.Uuid
   title       String
   views       Int          @default(0)
-  publishedAt DateTime?
+  publishedAt DateTime?    @default(now())
+  timeRead    Int?         @default(0) // Time to read in minutes
   slug        String       @unique
   content     String
   summary     String?      // Short summary of the post
@@ -38,18 +40,20 @@ model Post {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   expiresAt   DateTime?
-  userId      String       @db.Uuid // userId is now UUID to match the User's id
-  uId         String       @unique
-  user        User         @relation("UserPosts", fields: [userId], references: [id], onDelete: SetDefault) 
+  userId      String?      @db.Uuid // Make userId nullable
+  user        User?        @relation("UserPosts", fields: [userId], references: [id], onDelete: SetNull)
 
   // SEO Metadata
   metaTitle   String?      // Meta title for SEO
   metaDesc    String?      // Meta description for SEO
   metaKeywords String?     // Meta keywords for SEO
   metaImage   String?      // URL to an image for SEO sharing (og:image)
+  metaRobots  String?      // Meta robots for SEO (e.g., 'index, follow')
+  categories  Category[]   @relation("PostCategories")
+  tags        Tag[]        @relation("PostTags")
 
-  categories  Category[]   @relation("categories")
-  tags        Tag[]        @relation("tags")
+  // Content Lifecycle
+  status      PostStatus   @default(DRAFT) // draft, published, archived
 
   @@map("posts")
   @@index([slug], name: "slug_idx") // Indexed for faster lookups
@@ -59,7 +63,7 @@ model Category {
   id        String   @id @default(uuid()) @db.Uuid
   name      String   @unique
   slug      String   @unique
-  posts     Post[]   @relation("categories")
+  posts     Post[]   @relation("PostCategories")
 
   @@map("categories")
 }
@@ -68,11 +72,18 @@ model Tag {
   id        String   @id @default(uuid()) @db.Uuid
   name      String   @unique
   slug      String   @unique
-  posts     Post[]   @relation("tags")
+  posts     Post[]   @relation("PostTags")
 
   @@map("tags")
 }
 
+
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
 model Subscription {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -83,16 +94,15 @@ model Subscription {
 }
 
 enum AccountStatus {
-  active
-  suspended
-  inactive
-  pending
-
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+  PENDING
   @@map("account_status")
 }
 
 enum UserRole {
-  user
-  admin
+  USER
+  ADMIN
   @@map("user_roles")
 }

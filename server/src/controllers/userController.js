@@ -24,3 +24,6 @@ export const subscribeUser = asyncHandler(async (req, res) => {
 
   res.status(200).json({ message: "Subscribed successfully" });
 });
+
+// TODO: Implement the usSubscribeUser controller function to subscribe a user to the newsletter using the SendGrid API. The function should send a POST request to the SendGrid API with the user's email address and return a success message if the subscription is successful. If the subscription fails, the function should return an error message.
+export const unSubscribeUser = asyncHandler(async (req, res) => {});

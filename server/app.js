@@ -5,6 +5,7 @@ dotenv.config();
 import express from "express";
 import { errorHandler, AppError } from "./src/errors/index.js";
 import { logger } from "./src/utils/logger.js";
+import asyncHandler from "express-async-handler";
 
 // Load environment variables
 
@@ -23,14 +24,18 @@ app.use(logger);
 //routes
 import { authRouter } from "./src/routes/authRoutes.js";
 import { userRouter } from "./src/routes/userRoutes.js";
-
+import { postRouter } from "./src/routes/postRoutes.js";
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
+app.use("/api/post", postRouter);
 
 // Handle 404 routes
-app.all("*", (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
-});
+app.use(
+  "/api",
+  asyncHandler((req, res, next) => {
+    throw new AppError(`Can't find ${req.originalUrl} on this server!`, 404);
+  })
+);
 
 // Global error handling middleware (should be last)
 app.use(errorHandler);

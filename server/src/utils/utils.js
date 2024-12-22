@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { prisma } from "../../app.js";
 
 export function validateEmail(email) {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -44,4 +45,29 @@ export async function comparePasswords(plainPassword, hashedPassword) {
   } catch (error) {
     throw new AppError("Error comparing passwords", 500);
   }
+}
+
+export async function generateUniqueSlug(title) {
+  // Generate the basic slug from the title
+  let baseSlug = title
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w\-]+/g, "");
+
+  let slug = baseSlug;
+  let slugExists = await prisma.post.findUnique({
+    where: { slug: slug },
+  });
+
+  // If the slug already exists, append a number to make it unique
+  let counter = 1;
+  while (slugExists) {
+    slug = `${baseSlug}-${counter}`;
+    slugExists = await prisma.post.findUnique({
+      where: { slug: slug },
+    });
+    counter++;
+  }
+
+  return slug;
 }

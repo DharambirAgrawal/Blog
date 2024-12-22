@@ -2,21 +2,17 @@ import asyncHandler from "express-async-handler";
 import { AppError } from "../errors/AppError.js";
 import { prisma } from "../../app.js";
 import { validateEmail } from "../utils/utils.js";
-import {
-  decodeToken,
-  generateToken,
-  generateUniqueId,
-} from "../utils/jwtUtils.js";
-import { sendEmail } from "../services/emailService.js";
-import { VERIFY_EMAIL_MESSAGE } from "../messages/emailMessage.js";
+import { decodeToken, generateToken } from "../utils/jwtUtils.js";
 import { comparePasswords } from "../utils/utils.js";
 import { validatePassword } from "../utils/utils.js";
+import { hashData } from "../utils/utils.js";
 
+import { ADMIN_PAYLOAD } from "../utils/payload.js";
 //register ---->
 export const register = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
 
-  if (!name || !email || !password) {
+  if (!name || !email || !password || !role) {
     throw new AppError("Resource not found", 400);
   }
 
@@ -42,9 +38,14 @@ export const register = asyncHandler(async (req, res) => {
     data: {
       name: name,
       email: email,
-      password: password, // Make sure to hash the password before saving it
+      password: await hashData(password), // Make sure to hash the password before saving it
+      accountStatus: "ACTIVE",
+      role: role.toUpperCase(),
     },
   });
+  if (!newUser) {
+    throw new AppError("Failed to create user", 500);
+  }
 
   res.status(200).json({
     message: "success",
@@ -55,20 +56,7 @@ export const register = asyncHandler(async (req, res) => {
 
 //login ---->
 export const login = asyncHandler(async (req, res) => {
-  const { email, password, metaData } = req.body;
-  const {
-    platform,
-    userAgent,
-    browser,
-    language,
-    ip,
-    deviceFingerprint,
-    timezoneOffset,
-  } = metaData;
-
-  if (!platform || !userAgent || !browser) {
-    throw new AppError("Resource not found", 400);
-  }
+  const { email, password } = req.body;
 
   if (!email || !password) {
     throw new AppError("Resource not found", 400);
@@ -85,64 +73,24 @@ export const login = asyncHandler(async (req, res) => {
   });
 
   if (!User) {
-    throw new AppError("User not found", 500);
+    throw new AppError("User not found", 404);
   }
 
   // Check accountStatus & Check lockoutUntil
 
-  if (User.accountStatus == "inactive" || User.accountStatus == "suspended") {
+  if (User.accountStatus == "INACTIVE" || User.accountStatus == "SUSPENDED") {
     // TODO: Reset password email
-    const data = {
-      email: email,
-    };
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    // const res = await fetch(`${process.env.PUBLIC_URL}/api/auth/forgetpassword`,
-    //   {
-    //     method: "POST",
-    //     body: JSON.stringify(data),
-    //     headers: myHeaders,
-    //   }
-    // )
-
-    const baseUrl = `${req.protocol}://${req.get("host")}`;
-    const response = await fetch(`${baseUrl}/api/auth/forgetpassword`, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: myHeaders,
-    });
-    if (!response.ok) {
-      throw new AppError("Server Error", 500);
-    }
     return res.status(403).json({
       status: "failed",
-      message: "Reset password!",
+      message: "Unauthorized to login!",
     });
   }
 
-  if (User.accountStatus == "pending") {
-    // Resend Email to verify email (resend)
-    const payload = {
-      type: "verifyEmail",
-      email: email,
-    };
-    const token = generateToken(payload, process.env.VERIFY_EMAIL_SECRET);
-
-    await prisma.user.update({
-      where: {
-        email: email,
-      },
-      data: {
-        verificationToken: token,
-      },
-    });
-    const link = `${process.env.PUBLIC_URL}/api/auth/register/${token}`;
-    await sendEmail(email, VERIFY_EMAIL_MESSAGE(link));
-
-    return res.status(401).json({
+  if (User.accountStatus == "PENDING") {
+    // TODO: Manage pending state
+    return res.status(403).json({
       status: "failed",
-      message: "Verify your email!",
+      message: "Unauthorized to login!",
     });
   }
 
@@ -177,7 +125,7 @@ export const login = asyncHandler(async (req, res) => {
         },
         data: {
           failedLoginAttempts: User.failedLoginAttempts + 1,
-          accountStatus: "suspended",
+          accountStatus: "SUSPENDED",
           lockoutUntil: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes from now
         },
       });
@@ -201,19 +149,10 @@ export const login = asyncHandler(async (req, res) => {
   }
 
   // Create unique sessionId refreshToken, accessToken from email and sessionId
-  const sessionId = generateUniqueId();
-  const payload = {
-    sessionId: sessionId,
-    email: email,
-  };
-  const refreshToken = generateToken(
-    { type: "refresh", ...payload },
-    process.env.TOKEN_SECRET,
-    10080
-  ); // 7 day
-  const accessToken = generateToken(
-    { type: "access", ...payload },
-    process.env.TOKEN_SECRET,
+
+  const jwtToken = generateToken(
+    { role: role.toUpperCase(), ...ADMIN_PAYLOAD(email) },
+    process.env.JWT_TOKEN_SECRET,
     1440
   ); // 1 day
 
@@ -222,27 +161,8 @@ export const login = asyncHandler(async (req, res) => {
     data: {
       lockoutUntil: null,
       failedLoginAttempts: 0,
-      sessions: {
-        create: [
-          {
-            sessionId: sessionId,
-            refreshToken: refreshToken,
-            accessToken: accessToken,
-            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
-            metadata: {
-              create: {
-                platform: platform,
-                userAgent: userAgent,
-                browser: browser,
-                language: language,
-                ip: ip,
-                deviceFingerprint: deviceFingerprint,
-                timezoneOffset: parseInt(timezoneOffset),
-              },
-            },
-          },
-        ],
-      },
+      jwtToken: jwtToken,
+      lastActiveAt: new Date(Date.now()),
     },
   });
 
@@ -259,8 +179,10 @@ export const login = asyncHandler(async (req, res) => {
   );
 
   res.status(200).json({
-    sessionId: sessionId,
     status: "success",
+    data: {
+      name: updatedUser.name,
+    },
   });
 });
 // <-------- end of login
@@ -274,19 +196,19 @@ export const logout = asyncHandler(async (req, res) => {
     throw new AppError("Invalid request", 404);
   }
 
-  const { email, sessionId, type } = decodeToken(
-    token,
-    process.env.TOKEN_SECRET
-  );
+  const { email, role, type } = decodeToken(token, process.env.TOKEN_SECRET);
 
-  if (!email || !sessionId || !validateEmail(email) || type != "refresh") {
+  if (!email || !type || !validateEmail(email) || !role) {
     throw new AppError("Invalid request", 404);
   }
 
   // Delete the session
-  await prisma.session.delete({
+  await prisma.user.update({
     where: {
-      sessionId: sessionId,
+      email: email,
+    },
+    data: {
+      jwtToken: null,
     },
   });
 
@@ -295,3 +217,22 @@ export const logout = asyncHandler(async (req, res) => {
   });
 });
 // <-------- logout
+
+export const getUser = asyncHandler(async (req, res) => {
+  const { email } = req.params;
+  const user = await prisma.user.findUnique({
+    where: { email: email },
+  });
+  res.status(200).json({
+    status: "success",
+    data: user,
+  });
+});
+
+export const getUsers = asyncHandler(async (req, res) => {
+  const users = await prisma.user.findMany();
+  res.status(200).json({
+    status: "success",
+    data: users,
+  });
+});

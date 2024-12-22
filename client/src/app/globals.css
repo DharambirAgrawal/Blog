@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .bg-left-bottom {
+    background-position: left bottom;
+  }
+}
+
 .wrapper {
   margin: 0 auto;
   max-width: 1200px; /* Default max width for large screens */

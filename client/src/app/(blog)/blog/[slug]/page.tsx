@@ -44,6 +44,10 @@ export default async function Page({
               <span className="text-gray-500">Aug 24 2023</span>
               <span className="text-gray-500">•</span>
               <span className="text-gray-500">12 min read</span>
+              <span className="text-gray-500">12 min read</span>
+              <span className="inline-flex rounded-full bg-teal/[0.08] px-3 py-1 text-sm font-medium capitalize bg-blue-200 text-blue-400">
+                travel
+              </span>
             </div>
           </div>
 

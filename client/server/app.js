@@ -1,0 +1,47 @@
+// src/server.js
+// import dotenv from "dotenv";
+import cors from "cors";
+// dotenv.config();
+import express from "express";
+import { errorHandler, AppError } from "./src/errors/index.js";
+import { logger } from "./src/utils/logger.js";
+import asyncHandler from "express-async-handler";
+
+// Load environment variables
+
+const app = express();
+
+//connect DB
+import { PrismaClient } from "@prisma/client";
+export const prisma = new PrismaClient();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(logger);
+
+//routes
+import { authRouter } from "./src/routes/authRoutes.js";
+import { userRouter } from "./src/routes/userRoutes.js";
+import { postRouter } from "./src/routes/postRoutes.js";
+
+app.get("/api/health", (req, res) => {
+  res.json({ message: "Server is running" });
+});
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
+app.use("/api/post", postRouter);
+
+// Handle 404 routes
+app.use(
+  "/api",
+  asyncHandler((req, res, next) => {
+    throw new AppError(`Can't find ${req.originalUrl} on this server!`, 404);
+  })
+);
+
+// Global error handling middleware (should be last)
+app.use(errorHandler);
+
+export default app;

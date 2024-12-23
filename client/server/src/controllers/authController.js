@@ -151,7 +151,7 @@ export const login = asyncHandler(async (req, res) => {
   // Create unique sessionId refreshToken, accessToken from email and sessionId
 
   const jwtToken = generateToken(
-    { role: role.toUpperCase(), ...ADMIN_PAYLOAD(email) },
+    { role: User.role, ...ADMIN_PAYLOAD(email) },
     process.env.JWT_TOKEN_SECRET,
     1440
   ); // 1 day
@@ -170,19 +170,50 @@ export const login = asyncHandler(async (req, res) => {
     throw new AppError("Failed to update user", 500);
   }
 
-  // console.log(updatedUser)
-
-  //sending token in authorization token
-  res.setHeader(
-    "Authorization",
-    `Bearer ${refreshToken},Bearer ${accessToken}`
-  );
-
+  res.cookie("token", jwtToken, {
+    httpOnly: true, // Prevents access to the cookie via JavaScript
+    secure: process.env.NODE_ENV === "production", // Only send over HTTPS in production
+    sameSite: "Strict", // Prevents CSRF attacks
+    // No maxAge or expires set - this makes it a session cookie
+  });
+  // const token = req.cookies.token; to get cookeie anywhere
   res.status(200).json({
     status: "success",
     data: {
       name: updatedUser.name,
     },
+  });
+});
+
+export const verifyToken = asyncHandler(async (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    throw new AppError("Invalid request", 404);
+  }
+
+  const { email, role, type } = decodeToken(
+    token,
+    process.env.JWT_TOKEN_SECRET
+  );
+
+  if (!email || !type || !validateEmail(email) || !role) {
+    throw new AppError("Invalid request", 404);
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+
+  if (!user || user.jwtToken !== token || user.role !== role) {
+    throw new AppError("Invalid request", 404);
+  }
+
+  res.status(200).json({
+    status: "success",
   });
 });
 // <-------- end of login
@@ -196,7 +227,10 @@ export const logout = asyncHandler(async (req, res) => {
     throw new AppError("Invalid request", 404);
   }
 
-  const { email, role, type } = decodeToken(token, process.env.TOKEN_SECRET);
+  const { email, role, type } = decodeToken(
+    token,
+    process.env.JWT_TOKEN_SECRET
+  );
 
   if (!email || !type || !validateEmail(email) || !role) {
     throw new AppError("Invalid request", 404);

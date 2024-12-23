@@ -1,5 +1,7 @@
 import asyncHandler from "express-async-handler";
+import { AppError } from "../errors/AppError.js";
 import { decodeToken } from "../utils/jwtUtils.js";
+import { prisma } from "../../app.js";
 export const checkAdminRoleMiddleware = asyncHandler(async (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];

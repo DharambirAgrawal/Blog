@@ -6,6 +6,7 @@ import express from "express";
 import { errorHandler, AppError } from "./src/errors/index.js";
 import { logger } from "./src/utils/logger.js";
 import asyncHandler from "express-async-handler";
+import cookieParser from "cookie-parser";
 
 // Load environment variables
 
@@ -16,8 +17,13 @@ import { PrismaClient } from "@prisma/client";
 export const prisma = new PrismaClient();
 
 // Middleware
+// app.use(cors({
+//   origin: 'https://your-nextjs-app.com', // Allow only your front-end domain
+//   credentials: true,  // Allow cookies to be sent
+// }));
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(logger);
 

@@ -6,6 +6,7 @@ import {
   logout,
   getUser,
   getUsers,
+  verifyToken,
 } from "../controllers/authController.js";
 import {
   checkAdminRoleMiddleware,
@@ -20,6 +21,7 @@ export const authRouter = AuthRouter.post(
   register
 )
   .post("/login", login)
-  .get("/logout", checkUserMiddleware, logout)
+  .get("/verify", verifyToken)
+  .get("/logout", logout)
   .get("/users", checkAdminRoleMiddleware, getUsers)
   .get("/user/:email", checkUserMiddleware, getUser);

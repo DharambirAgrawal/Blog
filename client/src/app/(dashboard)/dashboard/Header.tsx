@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Bell, Search, User } from "lucide-react";
+import { logout } from "./actions";
 
 export default function Header() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -57,7 +58,7 @@ export default function Header() {
                     Your Profile
                   </a>
                   <button
-                    // onClick={logout}
+                    onClick={logout}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     Sign out

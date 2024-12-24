@@ -21,7 +21,11 @@ export const prisma = new PrismaClient();
 //   origin: 'https://your-nextjs-app.com', // Allow only your front-end domain
 //   credentials: true,  // Allow cookies to be sent
 // }));
+
+import multer from "multer";
+const upload = multer({}); //midddleware for handeling file
 app.use(cors());
+// app.use(upload.any());
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -37,7 +41,7 @@ app.get("/api/health", (req, res) => {
 });
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
-app.use("/api/post", postRouter);
+app.use("/api/post", upload.any(), postRouter);
 
 // Handle 404 routes
 app.use(

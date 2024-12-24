@@ -28,7 +28,7 @@ export async function submitBlogPost(prevState: any, formData: FormData) {
 
 export const handlePublish = async (formData: FormData) => {
   // console.log(e);
-  console.log("................");
+  console.log(".................");
   console.log(Object.fromEntries(formData));
   revalidatePath("/dashboard/write");
 };

@@ -8,20 +8,13 @@ import {
   getUsers,
   verifyToken,
 } from "../controllers/authController.js";
-import {
-  checkAdminRoleMiddleware,
-  checkUserMiddleware,
-} from "../middleware/authMiddleware.js";
+import { checkCookiesMiddleware } from "../middleware/authMiddleware.js";
 
 const AuthRouter = express.Router();
 
-export const authRouter = AuthRouter.post(
-  "/register",
-  checkAdminRoleMiddleware,
-  register
-)
-  .post("/login", login)
+export const authRouter = AuthRouter.post("/login", login)
   .get("/verify", verifyToken)
-  .get("/logout", logout)
-  .get("/users", checkAdminRoleMiddleware, getUsers)
-  .get("/user/:email", checkUserMiddleware, getUser);
+  .get("/logout", logout);
+// .post("/register",checkCookiesMiddleware,register) need to work on this
+// .get("/users", checkAdminRoleMiddleware, getUsers)
+// .get("/user/:email", checkUserMiddleware, getUser);

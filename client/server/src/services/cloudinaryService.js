@@ -1,34 +1,51 @@
 import { v2 as cloudinary } from "cloudinary";
+import { AppError } from "../errors/AppError.js";
+import { configCloudinary } from "../config/config.js";
 
-export async function uploadImage(image, name) {
-  // Configuration
-  cloudinary.config({
-    cloud_name: "dwhpe0oqy",
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_SECRET_KEY, // Click 'View API Keys' above to copy your API secret
-  });
+cloudinary.config(configCloudinary);
 
-  // Upload an image
-  const uploadResult = await cloudinary.uploader
-    .upload(
-      "https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg",
-      {
-        public_id: `pathgurus/${name}`,
-      }
-    )
-    .catch((error) => {
-      console.log(error);
-    });
+export function separateBaseUrl(imageUrl) {
+  const regex =
+    /^(https:\/\/res\.cloudinary\.com\/[^\/]+\/image\/upload\/)(.*)$/;
+  const match = imageUrl.match(regex);
+  if (match) {
+    const mainUrl = match[2]; // The remaining part, including version and public ID
 
-  console.log(uploadResult);
-
-  // Optimize delivery by resizing and applying auto-format and auto-quality
-  const optimizeUrl = cloudinary.url("shoes", {
-    fetch_format: "auto",
-    quality: "auto",
-  });
-
-  console.log(optimizeUrl);
-
-  console.log(autoCropUrl);
+    return mainUrl;
+  } else {
+    throw new Error("Invalid Cloudinary image URL");
+  }
 }
+
+export const cloudinaryUpload = async (image, folder) => {
+  try {
+    if (!image || image.length === 0) {
+      throw new AppError("No image found", 400);
+    }
+
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream(
+          {
+            resource_type: "image",
+            folder: folder,
+            transformation: [
+              { quality: "auto", fetch_format: "auto" }, // LQIP and auto optimization
+            ],
+          },
+          (error, result) => {
+            if (error) {
+              new AppError("Error uploading image to Cloudinary", 500);
+              reject(err);
+            } else {
+              resolve(result);
+            }
+          }
+        )
+        .end(image);
+    });
+  } catch (error) {
+    throw new AppError("Error uploading image to Cloudinary", 500);
+    console.log("cannot upload image", error);
+  }
+};

@@ -186,8 +186,7 @@ export const login = asyncHandler(async (req, res) => {
 });
 
 export const verifyToken = asyncHandler(async (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  const token = req.cookies.token;
 
   if (!token) {
     throw new AppError("Invalid request", 404);
@@ -214,14 +213,16 @@ export const verifyToken = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
+    role: user.role,
+    email: user.email,
+    name: user.name,
   });
 });
 // <-------- end of login
 
 //logout ---->
 export const logout = asyncHandler(async (req, res) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  const token = req.cookies.token;
 
   if (!token) {
     throw new AppError("Invalid request", 404);

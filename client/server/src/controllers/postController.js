@@ -2,7 +2,8 @@ import asyncHandler from "express-async-handler";
 import { AppError } from "../errors/AppError.js";
 import { prisma } from "../../app.js";
 import { generateUniqueSlug } from "../utils/utils.js";
-
+import { cloudinaryUpload } from "../services/cloudinaryService.js";
+import { separateBaseUrl } from "../services/cloudinaryService.js";
 // data = {
 //   title: "How to Build a Blog from Scratch",
 //   timeRead: 5,
@@ -243,6 +244,80 @@ export const publishPost = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json({ message: "Post published successfully" });
+});
+
+export const saveImageData = asyncHandler(async (req, res) => {
+  if (!req.files || req.files.length === 0) {
+    throw new AppError("No image found", 400);
+  }
+  //saving image data to the database and cloudinary
+  req.files.forEach(async (file) => {
+    const { buffer, originalname } = file;
+    const folder = "pathgurus/blog";
+    const { secure_url, public_id, format, created_at } =
+      await cloudinaryUpload(buffer, folder);
+    const mainUrl = separateBaseUrl(secure_url);
+
+    await prisma.image.create({
+      data: {
+        url: mainUrl,
+        publicId: public_id,
+        format: format,
+        createdAt: created_at,
+        title: originalname,
+      },
+    });
+  });
+  res.status(200).json({ message: "Saved image data successfully" });
+});
+
+export const getImages = asyncHandler(async (req, res) => {
+  const { id, page } = req.query;
+  if (!page) {
+    throw new AppError("Resource not found", 400);
+  }
+  if (id) {
+    const image = await prisma.image.findUnique({
+      where: { publicId: id + "" },
+    });
+    if (!image) {
+      throw new AppError("Resource not found", 404);
+    }
+    const { url, title, format, description, altText, tags } = image;
+    const fullUrl = `${process.env.CLOUDINARY_BASE_URL}${url}`;
+    return res.status(200).json({
+      status: "success",
+      image: {
+        url: fullUrl,
+        title,
+        format,
+        description,
+        altText,
+        publicId,
+        tags,
+      },
+    });
+  }
+  const images = await prisma.image.findMany();
+  const filterImages = images.map((image) => {
+    const { url, title, format, description, altText, publicId, tags } = image;
+
+    const fullUrl = `${process.env.CLOUDINARY_BASE_URL}${url}`;
+    return {
+      url: fullUrl,
+      title,
+      format,
+      description,
+      altText,
+      publicId,
+      tags,
+    };
+  });
+  // TODO: add pagination and filtering
+  res.status(200).json({
+    status: "success",
+    images: filterImages,
+  });
 });
 
 export const getPosts = asyncHandler(async (req, res) => {

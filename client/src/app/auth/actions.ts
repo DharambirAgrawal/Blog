@@ -28,8 +28,8 @@ export async function loginUser(prevState: any, formData: FormData) {
     httpOnly: true,
     path: "/",
     secure: true,
-    domain: process.env.MAIN_URL,
-    sameSite: "strict",
+    // domain: process.env.MAIN_URL,
+    // sameSite: "strict",
   });
   // await new Promise((resolve) => setTimeout(resolve, 5000));
   redirect("/dashboard");

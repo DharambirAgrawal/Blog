@@ -19,7 +19,7 @@ export async function middleware(request: NextRequest) {
       const res = await fetch(`${process.env.MAIN_URL}/api/auth/verify`, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token.value}`,
+          Cookie: `token=${token.value}`,
         },
       });
       if (!res.ok) {
@@ -40,7 +40,7 @@ export async function middleware(request: NextRequest) {
       const res = await fetch(`${process.env.MAIN_URL}/api/auth/verify`, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token.value}`,
+          Cookie: `token=${token.value}`,
         },
       });
       if (res.ok) {

@@ -1,4 +1,4 @@
-import { getUserData } from "./actions";
+import { getUserData } from "../actions";
 export default async function Dashboard() {
   const data = await getUserData();
   return (

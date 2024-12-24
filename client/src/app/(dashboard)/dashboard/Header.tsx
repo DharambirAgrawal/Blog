@@ -1,11 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bell, Search, User } from "lucide-react";
 import { logout } from "./actions";
+import { getUserData } from "./actions";
+
+interface User {
+  name: string;
+  role: string;
+  email: string;
+}
 
 export default function Header() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [user, setUser] = useState<User>({ name: "", role: "", email: "" });
+  useEffect(() => {
+    const getUser = async () => {
+      const data = await getUserData();
+      setUser(data);
+    };
+    getUser();
+  }, []);
 
   return (
     <header className="bg-white shadow">
@@ -44,7 +59,7 @@ export default function Header() {
                 <User className="h-5 w-5 text-gray-500" />
               </div>
               <span className="hidden md:block text-sm font-medium text-gray-700">
-                {/* {user?.name} */} user
+                {user.name}
               </span>
             </button>
 
